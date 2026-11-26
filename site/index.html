@@ -114,13 +114,13 @@ footer p{margin:6px 0}
     <span lang="en">A fast, clean player built for the big screen; the same app works by touch on phones and tablets. Add your own Xtream Codes account or M3U playlist and get channels, guide, movies and series in one place. No ads, no tracking.</span>
    </p>
    <div class="cta">
-    <a class="btn primary" id="dl" href="#kurulum">
+    <a class="btn primary" id="dl" href="ELM-IPTV-@VERSION@.apk">
      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
      <span lang="tr">APK'yı indir</span><span lang="en">Download APK</span>
     </a>
     <a class="btn" href="#kurulum"><span lang="tr">Nasıl kurulur?</span><span lang="en">How to install</span></a>
    </div>
-   <div class="meta" id="meta" aria-live="polite"></div>
+   <div class="meta" id="meta" aria-live="polite"><span lang="tr">Sürüm @VERSION@ · Android 6+</span><span lang="en">Version @VERSION@ · Android 6+</span></div>
   </div>
   <div class="tv">
    <img lang="tr" src="img/home-tr.png" width="1920" height="1080" alt="ELM IPTV ana ekranı: kategoriler solda, kanallar sağda">
@@ -213,7 +213,7 @@ footer p{margin:6px 0}
      <p><span lang="tr">Ayarlar → My Fire TV → Geliştirici seçenekleri → Bilinmeyen uygulamaları yükle → Downloader: Açık. Geliştirici seçenekleri görünmüyorsa My Fire TV → Hakkında'da cihaz adına 7 kez basın.</span><span lang="en">Settings → My Fire TV → Developer options → Install unknown apps → Downloader: On. If Developer options is missing, press the device name 7 times under My Fire TV → About.</span></p></div>
     <div class="step"><h3><span lang="tr">Adresi yazın</span><span lang="en">Enter the address</span></h3>
      <p><span lang="tr">Downloader'da şu adresi yazın, indirme bitince "Yükle"yi seçin:</span><span lang="en">Type this address in Downloader, then choose "Install" when the download finishes:</span>
-      <span class="addr" id="addr">—</span></p></div>
+      <span class="addr" id="addr">@SITE@/ELM-IPTV-@VERSION@.apk</span></p></div>
    </div>
    <p class="sub" style="margin-top:28px;margin-bottom:8px"><span lang="tr"><b>Android TV ve Google TV:</b> aynı yol geçerli; Downloader ya da bir dosya yöneticisiyle APK'yı açın ve kurulum iznini verin.</span><span lang="en"><b>Android TV and Google TV:</b> the same steps; open the APK with Downloader or a file manager and allow the install.</span></p>
    <p class="sub" style="margin-bottom:0"><span lang="tr"><b>Telefon ve tablet:</b> bu sayfayı telefonda açıp "APK'yı indir"e dokunun, indirilen dosyayı açın ve tarayıcınızın uygulama yüklemesine izin verin.</span><span lang="en"><b>Phones and tablets:</b> open this page on the phone, tap "Download APK", open the downloaded file and allow your browser to install apps.</span></p>
@@ -233,7 +233,7 @@ footer p{margin:6px 0}
    <details><summary><span lang="tr">Aynı hesabı birden çok cihazda kullanabilir miyim?</span><span lang="en">Can I use the same account on several devices?</span></summary>
     <p><span lang="tr">Bu, sağlayıcınızın izin verdiği bağlantı sayısına bağlı. Sınır doluysa sağlayıcı yayını kapatır; ELM IPTV birkaç denemeden sonra durur, diğer cihazı düşürmeye çalışmaz ve ekranda nedenini söyler. Kanalı yeniden seçmek bir kez daha dener.</span><span lang="en">That depends on how many connections your provider allows. When the limit is reached the provider closes the stream; ELM IPTV stops after a few tries instead of pushing the other device off, and says why on screen. Choosing the channel again tries once more.</span></p></details>
    <details><summary><span lang="tr">Bilgisayarda çalışır mı?</span><span lang="en">Does it run on a computer?</span></summary>
-    <p><span lang="tr">Windows ve Linux sürümü deneme aşamasında; hazır olduğunda burada duyurulacak.</span><span lang="en">A Windows and Linux version is being tested; it will be announced here when it's ready.</span></p></details>
+    <p><span lang="tr">Evet: Windows 10/11 ve 64 bit Linux sürümleri <a href="https://github.com/TA3HRJ/elm-iptv/releases/latest">GitHub sürüm sayfasında</a> (.msi ve .AppImage). Bilgisayarda VLC 3 kurulu olmalı.</span><span lang="en">Yes: Windows 10/11 and 64-bit Linux versions are on the <a href="https://github.com/TA3HRJ/elm-iptv/releases/latest">GitHub releases page</a> (.msi and .AppImage). VLC 3 must be installed on the computer.</span></p></details>
    <details><summary><span lang="tr">Hesap bilgilerim nereye gidiyor?</span><span lang="en">Where do my account details go?</span></summary>
     <p><span lang="tr">Yalnızca cihazınızda saklanır ve yalnızca sağlayıcınızın sunucusuna gönderilir. Uygulamada reklam, analitik ya da kullanım takibi yok; hata kayıtları cihazda kalır.</span><span lang="en">They're stored only on your device and sent only to your provider's server. The app has no ads, analytics or usage tracking; error logs stay on the device.</span></p></details>
    <details><summary><span lang="tr">Güncellemeleri nasıl alırım?</span><span lang="en">How do I get updates?</span></summary>
@@ -247,6 +247,7 @@ footer p{margin:6px 0}
  <div class="wrap">
   <p><span lang="tr">İletişim:</span><span lang="en">Contact:</span> <a href="mailto:errhan@hotmail.com">errhan@hotmail.com</a></p>
   <p><span lang="tr">Fire TV, Amazon.com, Inc. veya iştiraklerinin; Android TV ve Google TV, Google LLC'nin ticari markalarıdır. ELM IPTV bu şirketlerle bağlantılı değildir ve onlar tarafından onaylanmamıştır.</span><span lang="en">Fire TV is a trademark of Amazon.com, Inc. or its affiliates; Android TV and Google TV are trademarks of Google LLC. ELM IPTV is not affiliated with or endorsed by these companies.</span></p>
+  <p><span lang="tr">Açık kaynak (GPL-3.0):</span><span lang="en">Open source (GPL-3.0):</span> <a href="https://github.com/TA3HRJ/elm-iptv">github.com/TA3HRJ/elm-iptv</a></p>
   <p>© <span id="year">2026</span> ELM IPTV</p>
  </div>
 </footer>
@@ -267,7 +268,7 @@ footer p{margin:6px 0}
   document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.set); }); });
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  var release = null, failed = false;
+  var release = null;
   function mb(n) { return (n / 1e6).toFixed(1).replace('.', root.lang === 'tr' ? ',' : '.') + ' MB'; }
   function render() {
     var tr = root.lang === 'tr';
@@ -277,16 +278,14 @@ footer p{margin:6px 0}
       document.getElementById('dl').href = url;
       meta.textContent = (tr ? 'Sürüm ' : 'Version ') + release.version + ' · ' + mb(release.size) + ' · Android 6+';
       addr.textContent = url;
-    } else if (failed) {
-      meta.textContent = tr ? 'Sürüm bilgisi şu an alınamadı.' : 'Version info is unavailable right now.';
-      addr.textContent = location.origin + '/';
     }
+    // Without latest.json the version written in at upload time stays (it also covers browsers without JavaScript).
   }
   setLang(initial);
   fetch('latest.json', { cache: 'no-cache' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (j) { if (!j.apk || !j.version) throw new Error('bad'); release = j; render(); })
-    .catch(function () { failed = true; render(); });
+    .catch(function () {});
 })();
 </script>
 </body>

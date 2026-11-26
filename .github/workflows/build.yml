@@ -120,7 +120,13 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.ELM_DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.ELM_DEPLOY_USER }}
-        run: rsync -e "$SSH_CMD" -r --chmod=D755,F644 site/ "$DEPLOY_USER@$DEPLOY_HOST:"
+          VERSION: ${{ steps.version.outputs.tag }}
+        # The current version and address are written into the page, so it is right even where JavaScript does not run.
+        run: |
+          site="$RUNNER_TEMP/site" && rm -rf "$site" && cp -r site "$site"
+          sed -i -e "s|@VERSION@|${VERSION#v}|g" -e "s|@SITE@|${ELM_UPDATE_URL%/latest.json}|g" "$site/index.html"
+          if grep -q "@VERSION@\|@SITE@" "$site/index.html"; then echo "::error::site placeholders left"; exit 1; fi
+          rsync -e "$SSH_CMD" -r --chmod=D755,F644 "$site/" "$DEPLOY_USER@$DEPLOY_HOST:"
 
       # The app checks for updates on our server: latest.json says which APK is newest, with its size and SHA-256.
       - name: Write latest.json
