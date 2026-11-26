@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="tr" data-l="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ELM IPTV</title>
+<meta name="description" content="ELM IPTV: Fire TV ve Android TV için kumandayla kullanılan, telefon ve tablette dokunmayla da çalışan reklamsız IPTV oynatıcı. Kendi Xtream Codes veya M3U listenizi ekleyin.">
+<meta name="theme-color" content="#0e1116">
+<meta property="og:title" content="ELM IPTV">
+<meta property="og:description" content="Fire TV ve Android TV için kumandayla, telefon ve tablette dokunmayla kullanılan reklamsız IPTV oynatıcı.">
+<meta property="og:image" content="img/home-tr.png">
+<link rel="icon" href="img/emblem.png">
+<style>
+:root{--bg:#0e1116;--bg2:#151a22;--card:#1a2029;--line:#262e3a;--text:#e9edf3;--muted:#9aa5b5;--accent:#4a9dff;--accent2:#44d0ff;--dot:#ff5566;--radius:14px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+html[data-l="tr"] [lang="en"],html[data-l="en"] [lang="tr"]{display:none!important}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:10;background:rgba(14,17,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:20px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--text);letter-spacing:.2px}
+.brand img{width:34px;height:34px}
+.brand b{color:var(--accent)}
+nav{display:flex;gap:22px;margin-left:auto;font-size:15px}
+nav a{color:var(--muted)}
+nav a:hover{color:var(--text);text-decoration:none}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;padding:5px 11px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--card);color:var(--text)}
+.hero{padding-top:72px;padding-bottom:56px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-bottom:14px}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--dot)}
+h1{font-size:clamp(34px,5vw,54px);line-height:1.08;margin:0 0 18px;letter-spacing:-.5px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);font-size:18px;margin:0 0 28px;max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:13px 24px;font-weight:600;font-size:16px;border:1px solid var(--line);color:var(--text);background:var(--card)}
+.btn:hover{text-decoration:none;border-color:#3a4554}
+.btn.primary{background:linear-gradient(90deg,#2f74e8,#3aa6f5);border-color:transparent;color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn svg{width:18px;height:18px}
+.meta{color:var(--muted);font-size:13px;margin-top:12px;min-height:1.6em}
+.tv{position:relative;background:#05070a;border:10px solid #1d232c;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px #2a323d}
+.tv img{display:block;width:100%;height:auto;border-radius:6px}
+.phone{position:relative;justify-self:center;width:min(300px,78vw);background:#05070a;border:10px solid #1d232c;border-radius:38px;padding:8px 0;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px #2a323d}
+.phone img{display:block;width:100%;height:auto;border-radius:22px}
+.phone:before{content:"";position:absolute;top:-4px;left:50%;width:30%;height:6px;transform:translateX(-50%);background:#2a323d;border-radius:0 0 6px 6px}
+.tv:after{content:"";position:absolute;left:50%;bottom:-34px;width:34%;height:14px;transform:translateX(-50%);background:#1d232c;border-radius:0 0 10px 10px}
+section{padding:72px 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(26px,3.4vw,36px);margin:0 0 10px;letter-spacing:-.3px}
+.sub{color:var(--muted);margin:0 0 36px;max-width:40em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.card h3{margin:12px 0 6px;font-size:17px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:rgba(74,157,255,.12);color:var(--accent2)}
+.ico svg{width:22px;height:22px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center}
+.ticks{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.ticks li{display:flex;gap:12px;color:var(--muted)}
+.ticks li:before{content:"";flex:0 0 8px;height:8px;margin-top:9px;border-radius:50%;background:var(--accent)}
+.ticks b{color:var(--text);font-weight:600}
+.steps{counter-reset:s;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.step{counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 22px 66px;position:relative}
+.step:before{content:counter(s);position:absolute;left:20px;top:20px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:linear-gradient(135deg,#2f74e8,#3aa6f5);color:#fff}
+.step h3{margin:2px 0 6px;font-size:17px}
+.step p{margin:0;color:var(--muted);font-size:15px}
+code,.addr{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:14px;background:#0a0d12;border:1px solid var(--line);border-radius:6px;padding:2px 7px;color:var(--text);word-break:break-all}
+.addr{display:block;margin-top:10px;padding:10px 12px}
+details{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--muted);font-weight:400;font-size:20px;line-height:1}
+details[open] summary:after{content:"–"}
+details p{color:var(--muted);margin:10px 0 0}
+.note{background:rgba(255,85,102,.08);border:1px solid rgba(255,85,102,.3);border-radius:var(--radius);padding:16px 20px;color:#f0c4ca;font-size:15px}
+footer{border-top:1px solid var(--line);padding:36px 0 48px;color:var(--muted);font-size:13px}
+footer p{margin:6px 0}
+@media (max-width:860px){
+ .hero,.split{grid-template-columns:1fr;gap:36px}
+ .hero{padding-top:44px}
+ nav{display:none}
+ .lang{margin-left:auto}
+ section{padding:56px 0}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap bar">
+  <a class="brand" href="#top"><img src="img/emblem.png" alt="" width="34" height="34"><span>ELM <b>IPTV</b></span></a>
+  <nav>
+   <a href="#ozellikler"><span lang="tr">Özellikler</span><span lang="en">Features</span></a>
+   <a href="#kurulum"><span lang="tr">Kurulum</span><span lang="en">Install</span></a>
+   <a href="#sss"><span lang="tr">SSS</span><span lang="en">FAQ</span></a>
+  </nav>
+  <div class="lang" role="group" aria-label="Dil / Language">
+   <button type="button" data-set="tr" aria-pressed="true">TR</button>
+   <button type="button" data-set="en" aria-pressed="false">EN</button>
+  </div>
+ </div>
+</header>
+
+<main id="top">
+ <div class="wrap hero">
+  <div>
+   <div class="eyebrow"><i></i><span lang="tr">Fire TV · Android TV · Google TV · Telefon ve tablet</span><span lang="en">Fire TV · Android TV · Google TV · Phones and tablets</span></div>
+   <h1><span lang="tr">Kumandayla <em>rahat</em> IPTV.</span><span lang="en">IPTV that <em>feels right</em> on a remote.</span></h1>
+   <p class="lead">
+    <span lang="tr">Televizyon için tasarlanmış hızlı ve sade bir oynatıcı; aynı uygulama telefonda ve tablette dokunmayla çalışır. Kendi Xtream Codes hesabınızı ya da M3U listenizi ekleyin; kanallar, rehber, filmler ve diziler tek yerde. Reklam yok, izleme yok.</span>
+    <span lang="en">A fast, clean player built for the big screen; the same app works by touch on phones and tablets. Add your own Xtream Codes account or M3U playlist and get channels, guide, movies and series in one place. No ads, no tracking.</span>
+   </p>
+   <div class="cta">
+    <a class="btn primary" id="dl" href="#kurulum">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
+     <span lang="tr">APK'yı indir</span><span lang="en">Download APK</span>
+    </a>
+    <a class="btn" href="#kurulum"><span lang="tr">Nasıl kurulur?</span><span lang="en">How to install</span></a>
+   </div>
+   <div class="meta" id="meta" aria-live="polite"></div>
+  </div>
+  <div class="tv">
+   <img lang="tr" src="img/home-tr.png" width="1920" height="1080" alt="ELM IPTV ana ekranı: kategoriler solda, kanallar sağda">
+   <img lang="en" src="img/home-en.png" width="1920" height="1080" alt="ELM IPTV home screen: categories on the left, channels on the right">
+  </div>
+ </div>
+
+ <section id="ozellikler">
+  <div class="wrap">
+   <h2><span lang="tr">Kanepeden hiç kalkmadan</span><span lang="en">Everything from the couch</span></h2>
+   <p class="sub"><span lang="tr">Her ekran kumandanın yön tuşları ve OK için düşünüldü; fare gerekmez. Telefonda ve tablette aynı ekranlar dokunmayla çalışır.</span><span lang="en">Every screen is designed around the arrow keys and OK; no mouse needed. On phones and tablets the same screens work by touch.</span></p>
+   <div class="grid">
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="m10 9 4 2-4 2z"/><path d="M8 21h8"/></svg></div>
+     <h3><span lang="tr">Kesintisiz önizleme</span><span lang="en">Seamless preview</span></h3>
+     <p><span lang="tr">Seçili kanal küçük pencerede oynar; OK ile tam ekrana siyah ekran ve yeniden yükleme olmadan geçer.</span><span lang="en">The focused channel plays in a small window; OK takes it full screen with no black screen or reload.</span></p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg></div>
+     <h3><span lang="tr">TV rehberi ve arşiv</span><span lang="en">TV guide and catch-up</span></h3>
+     <p><span lang="tr">Tüm kategoriler tek rehberde; geçmiş programları arşivden izleyin, gelecektekilere hatırlatıcı kurun.</span><span lang="en">All categories in one guide; watch past shows from catch-up and set reminders for upcoming ones.</span></p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></div>
+     <h3><span lang="tr">Kayıt ve dizi kaydı</span><span lang="en">Recording and series recording</span></h3>
+     <p><span lang="tr">Yayını ya da programı kaydedin; dizi kaydı yeni bölümleri rehber güncellendikçe kendiliğinden planlar.</span><span lang="en">Record a stream or a show; series recording schedules new episodes as the guide updates.</span></p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h3v16H7zM14 4h3v16h-3z"/></svg></div>
+     <h3><span lang="tr">Duraklat ve geri sar</span><span lang="en">Pause and rewind live TV</span></h3>
+     <p><span lang="tr">Canlı yayını durdurun, 10 saniyelik adımlarla geri sarın; arşivi olan kanalda programı baştan başlatın.</span><span lang="en">Pause live TV and skip back in 10-second steps; restart the current show on channels with catch-up.</span></p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.8.2 5 2.6 5 5.8"/></svg></div>
+     <h3><span lang="tr">Profiller ve çocuk profili</span><span lang="en">Profiles and a kids profile</span></h3>
+     <p><span lang="tr">Herkesin kendi favorileri ve kaldığı yerler. Çocuk profili yalnızca seçtiğiniz kategorileri görür; PIN kilidi var.</span><span lang="en">Everyone gets their own favorites and resume points. The kids profile only sees the categories you pick; PIN lock included.</span></p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="7" rx="1"/><rect x="13" y="4" width="8" height="7" rx="1"/><rect x="3" y="13" width="8" height="7" rx="1"/><rect x="13" y="13" width="8" height="7" rx="1"/></svg></div>
+     <h3><span lang="tr">Çoklu ekran</span><span lang="en">Multi-view</span></h3>
+     <p><span lang="tr">Dört kanala kadar aynı anda; sesi istediğiniz pencereye sabitleyin.</span><span lang="en">Up to four channels at once; pin the sound to the window you want.</span></p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+     <h3><span lang="tr">Telefondan yedek aktarımı</span><span lang="en">Backups from your phone</span></h3>
+     <p><span lang="tr">Parolalı (AES-256) yedek; ev ağındaki telefondan TV'ye gönderin ya da indirin. Dosya seçicisi olmayan Fire TV'de de çalışır.</span><span lang="en">Password-protected (AES-256) backups; send them to the TV from a phone on your home network, or download them. Works on Fire TV, which has no file picker.</span></p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></div>
+     <h3><span lang="tr">Kendini güncelleyen uygulama</span><span lang="en">Updates itself</span></h3>
+     <p><span lang="tr">Yeni sürümü kendisi bulur; indirdiği dosyanın bütünlüğünü ve imzasını doğruladıktan sonra kurar.</span><span lang="en">Finds new versions on its own and checks the download's integrity and signature before installing.</span></p></div>
+   </div>
+  </div>
+ </section>
+
+ <section>
+  <div class="wrap split">
+   <div class="tv">
+    <img lang="tr" src="img/settings-tr.png" width="1920" height="1080" loading="lazy" alt="ELM IPTV ayarlar ekranı">
+    <img lang="en" src="img/settings-en.png" width="1920" height="1080" loading="lazy" alt="ELM IPTV settings screen">
+   </div>
+   <div>
+    <h2><span lang="tr">Ayrıntılar da düşünüldü</span><span lang="en">The details are covered too</span></h2>
+    <ul class="ticks">
+     <li><span lang="tr"><b>Türkçe uyumlu arama:</b> "cocuk" yazın, "ÇOCUK" bulunsun. Kanal, film, dizi ve programlarda.</span><span lang="en"><b>Accent-aware search:</b> finds channels, movies, series and shows however you type them.</span></li>
+     <li><span lang="tr"><b>Geniş ses desteği:</b> AC3, E-AC3, DTS ve MP2; cihaz çözemezse yazılım çözücü devreye girer.</span><span lang="en"><b>Wide audio support:</b> AC3, E-AC3, DTS and MP2, with a software decoder when the device can't.</span></li>
+     <li><span lang="tr"><b>Kare hızı eşleme:</b> TV'nin yenileme hızı yayına göre ayarlanır (50 Hz, 24 Hz).</span><span lang="en"><b>Frame-rate matching:</b> the TV's refresh rate follows the stream (50 Hz, 24 Hz).</span></li>
+     <li><span lang="tr"><b>Büyük listeler:</b> on binlerce kanal ve film, düşük bellekle.</span><span lang="en"><b>Big playlists:</b> tens of thousands of channels and movies, with low memory use.</span></li>
+     <li><span lang="tr"><b>Kopan yayına yeniden bağlanma:</b> ağ geri gelince kendiliğinden; görüntü takılırsa oynatıcı kendini toparlar.</span><span lang="en"><b>Reconnects dropped streams</b> on its own as soon as the network is back, and recovers when the picture freezes.</span></li>
+     <li><span lang="tr"><b>Başka cihazla çekişmez:</b> aynı hesapta başka bir cihaz izlerken sağlayıcı yayını kapatırsa birkaç denemeden sonra durur ve nedenini söyler.</span><span lang="en"><b>No tug of war:</b> if your provider keeps closing the stream because another device is watching on the same account, it stops after a few tries and tells you why.</span></li>
+     <li><span lang="tr"><b>Uzun süre açık kalabilir:</b> canlı yayın arabelleğinin bir üst sınırı var; saatlerce izlemede de cihazın belleği dolmaz.</span><span lang="en"><b>Made to stay on:</b> the live buffer has a hard limit, so hours of watching don't fill up the device's memory.</span></li>
+     <li><span lang="tr"><b>Türkçe ve İngilizce</b> arayüz; yazı boyutu dört kademe.</span><span lang="en"><b>Turkish and English</b> interface; four text sizes.</span></li>
+    </ul>
+   </div>
+  </div>
+ </section>
+
+ <section id="telefon">
+  <div class="wrap split">
+   <div>
+    <h2><span lang="tr">Telefonda ve tablette de</span><span lang="en">On phones and tablets too</span></h2>
+    <p class="sub"><span lang="tr">Ayrı bir uygulama yok: aynı APK, Android 6 ve üzeri telefon ve tabletlerde dokunmayla çalışır.</span><span lang="en">No separate app: the same APK works by touch on phones and tablets running Android 6 or later.</span></p>
+    <ul class="ticks">
+     <li><span lang="tr"><b>Dokun:</b> seç ve izle. <b>Basılı tut:</b> favori, sıra, gizle, kilitle.</span><span lang="en"><b>Tap</b> to pick and watch. <b>Hold</b> for favorite, order, hide and lock.</span></li>
+     <li><span lang="tr"><b>Dar ekranda tek sütun:</b> önce kategoriler, dokununca kanallar; "‹ kategori" ya da Geri ile dönülür.</span><span lang="en"><b>One column on narrow screens:</b> categories first, then channels; "‹ category" or Back returns.</span></li>
+     <li><span lang="tr"><b>Oynatıcıda kaydırın:</b> yukarı/aşağı kanal değiştirir, sola/sağa sarar ya da panelleri açar; çift dokunuş menüyü açar.</span><span lang="en"><b>Swipe in the player:</b> up/down changes channel, left/right seeks or opens the panels; a double tap opens the menu.</span></li>
+     <li><span lang="tr"><b>Dikey ve yatay</b> tutuşta; tablette TV'deki gibi iki sütun.</span><span lang="en"><b>Portrait and landscape</b>; tablets get the two-column TV layout.</span></li>
+    </ul>
+   </div>
+   <div class="phone">
+    <img lang="tr" src="img/phone-tr.png" width="1233" height="2673" loading="lazy" alt="ELM IPTV telefonda: Ulusal kategorisinin kanal listesi">
+    <img lang="en" src="img/phone-en.png" width="1233" height="2673" loading="lazy" alt="ELM IPTV on a phone: the channel list of the National category">
+   </div>
+  </div>
+ </section>
+
+ <section id="kurulum">
+  <div class="wrap">
+   <h2><span lang="tr">Kurulum</span><span lang="en">Installing</span></h2>
+   <p class="sub"><span lang="tr">Uygulama mağazada değil; APK olarak kurulur. Bir kez kurduktan sonra güncellemeler uygulamanın içinden gelir.</span><span lang="en">The app isn't in a store; it's installed as an APK. After the first install, updates come from inside the app.</span></p>
+   <div class="steps">
+    <div class="step"><h3><span lang="tr">Downloader'ı yükleyin</span><span lang="en">Get Downloader</span></h3>
+     <p><span lang="tr">Fire TV'de arama ile "Downloader" uygulamasını bulun ve yükleyin.</span><span lang="en">On your Fire TV, search for the "Downloader" app and install it.</span></p></div>
+    <div class="step"><h3><span lang="tr">Kuruluma izin verin</span><span lang="en">Allow installs</span></h3>
+     <p><span lang="tr">Ayarlar → My Fire TV → Geliştirici seçenekleri → Bilinmeyen uygulamaları yükle → Downloader: Açık. Geliştirici seçenekleri görünmüyorsa My Fire TV → Hakkında'da cihaz adına 7 kez basın.</span><span lang="en">Settings → My Fire TV → Developer options → Install unknown apps → Downloader: On. If Developer options is missing, press the device name 7 times under My Fire TV → About.</span></p></div>
+    <div class="step"><h3><span lang="tr">Adresi yazın</span><span lang="en">Enter the address</span></h3>
+     <p><span lang="tr">Downloader'da şu adresi yazın, indirme bitince "Yükle"yi seçin:</span><span lang="en">Type this address in Downloader, then choose "Install" when the download finishes:</span>
+      <span class="addr" id="addr">—</span></p></div>
+   </div>
+   <p class="sub" style="margin-top:28px;margin-bottom:8px"><span lang="tr"><b>Android TV ve Google TV:</b> aynı yol geçerli; Downloader ya da bir dosya yöneticisiyle APK'yı açın ve kurulum iznini verin.</span><span lang="en"><b>Android TV and Google TV:</b> the same steps; open the APK with Downloader or a file manager and allow the install.</span></p>
+   <p class="sub" style="margin-bottom:0"><span lang="tr"><b>Telefon ve tablet:</b> bu sayfayı telefonda açıp "APK'yı indir"e dokunun, indirilen dosyayı açın ve tarayıcınızın uygulama yüklemesine izin verin.</span><span lang="en"><b>Phones and tablets:</b> open this page on the phone, tap "Download APK", open the downloaded file and allow your browser to install apps.</span></p>
+  </div>
+ </section>
+
+ <section id="sss">
+  <div class="wrap">
+   <h2><span lang="tr">Sık sorulanlar</span><span lang="en">Questions</span></h2>
+   <p class="sub"></p>
+   <details><summary><span lang="tr">Kanal ya da içerik veriyor mu?</span><span lang="en">Does it come with channels?</span></summary>
+    <p><span lang="tr">Hayır. ELM IPTV yalnızca bir oynatıcıdır; içerik sağlamaz ve satmaz. Kendi IPTV sağlayıcınızın Xtream Codes bilgilerini ya da M3U bağlantısını kullanırsınız.</span><span lang="en">No. ELM IPTV is only a player; it doesn't provide or sell any content. You use the Xtream Codes details or M3U link from your own IPTV provider.</span></p></details>
+   <details><summary><span lang="tr">Ücretli mi?</span><span lang="en">Does it cost anything?</span></summary>
+    <p><span lang="tr">Hayır. Ücretsiz; reklam ya da uygulama içi satın alma yok.</span><span lang="en">No. It's free, with no ads and no in-app purchases.</span></p></details>
+   <details><summary><span lang="tr">Hangi cihazlarda çalışır?</span><span lang="en">Which devices does it run on?</span></summary>
+    <p><span lang="tr">Fire OS 6, 7 ve 8 kullanan Fire TV cihazlarında (Fire OS 6 ve 8'de gerçek cihazda denendi), Android 6 ve üzeri Android TV ve Google TV cihazlarında, Android telefon ve tabletlerde. Vega OS kullanan yeni Fire TV'lerde (Fire TV Stick 4K Select ve sonrası) çalışmaz; bu cihazlara dışarıdan uygulama kurulamıyor. Cihazınızın hangisini kullandığını Ayarlar → My Fire TV → Hakkında'da görebilirsiniz.</span><span lang="en">Fire TV devices with Fire OS 6, 7 and 8 (tested on real Fire OS 6 and 8 devices), Android TV and Google TV devices running Android 6 or later, and Android phones and tablets. It doesn't run on newer Fire TVs with Vega OS (Fire TV Stick 4K Select and later), which don't allow installing apps from outside the store. Settings → My Fire TV → About shows which one yours runs.</span></p></details>
+   <details><summary><span lang="tr">Aynı hesabı birden çok cihazda kullanabilir miyim?</span><span lang="en">Can I use the same account on several devices?</span></summary>
+    <p><span lang="tr">Bu, sağlayıcınızın izin verdiği bağlantı sayısına bağlı. Sınır doluysa sağlayıcı yayını kapatır; ELM IPTV birkaç denemeden sonra durur, diğer cihazı düşürmeye çalışmaz ve ekranda nedenini söyler. Kanalı yeniden seçmek bir kez daha dener.</span><span lang="en">That depends on how many connections your provider allows. When the limit is reached the provider closes the stream; ELM IPTV stops after a few tries instead of pushing the other device off, and says why on screen. Choosing the channel again tries once more.</span></p></details>
+   <details><summary><span lang="tr">Bilgisayarda çalışır mı?</span><span lang="en">Does it run on a computer?</span></summary>
+    <p><span lang="tr">Windows ve Linux sürümü deneme aşamasında; hazır olduğunda burada duyurulacak.</span><span lang="en">A Windows and Linux version is being tested; it will be announced here when it's ready.</span></p></details>
+   <details><summary><span lang="tr">Hesap bilgilerim nereye gidiyor?</span><span lang="en">Where do my account details go?</span></summary>
+    <p><span lang="tr">Yalnızca cihazınızda saklanır ve yalnızca sağlayıcınızın sunucusuna gönderilir. Uygulamada reklam, analitik ya da kullanım takibi yok; hata kayıtları cihazda kalır.</span><span lang="en">They're stored only on your device and sent only to your provider's server. The app has no ads, analytics or usage tracking; error logs stay on the device.</span></p></details>
+   <details><summary><span lang="tr">Güncellemeleri nasıl alırım?</span><span lang="en">How do I get updates?</span></summary>
+    <p><span lang="tr">Uygulama günde bir kez yeni sürüm olup olmadığına bakar ve sorar. Ayarlar → Hesaplar ve sistem → Güncelleme'den elle de denetleyebilirsiniz.</span><span lang="en">The app checks once a day and asks you. You can also check by hand under Settings → Accounts and system → Update.</span></p></details>
+   <div class="note" style="margin-top:24px"><span lang="tr">Yalnızca izin verilen içerikleri izleyin. Telif hakkıyla korunan yayınlara yetkisiz erişim yasalara aykırıdır; ELM IPTV böyle bir kullanımı desteklemez.</span><span lang="en">Only watch content you're allowed to. Unauthorized access to copyrighted broadcasts is illegal, and ELM IPTV doesn't support such use.</span></div>
+  </div>
+ </section>
+</main>
+
+<footer>
+ <div class="wrap">
+  <p><span lang="tr">İletişim:</span><span lang="en">Contact:</span> <a href="mailto:errhan@hotmail.com">errhan@hotmail.com</a></p>
+  <p><span lang="tr">Fire TV, Amazon.com, Inc. veya iştiraklerinin; Android TV ve Google TV, Google LLC'nin ticari markalarıdır. ELM IPTV bu şirketlerle bağlantılı değildir ve onlar tarafından onaylanmamıştır.</span><span lang="en">Fire TV is a trademark of Amazon.com, Inc. or its affiliates; Android TV and Google TV are trademarks of Google LLC. ELM IPTV is not affiliated with or endorsed by these companies.</span></p>
+  <p>© <span id="year">2026</span> ELM IPTV</p>
+ </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function setLang(l) {
+    root.setAttribute('data-l', l);
+    root.lang = l;
+    document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.set === l)); });
+    try { localStorage.setItem('elm-lang', l); } catch (e) {}
+    render();
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('elm-lang'); } catch (e) {}
+  var initial = saved || ((navigator.language || 'tr').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'en');
+  document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.set); }); });
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var release = null, failed = false;
+  function mb(n) { return (n / 1e6).toFixed(1).replace('.', root.lang === 'tr' ? ',' : '.') + ' MB'; }
+  function render() {
+    var tr = root.lang === 'tr';
+    var meta = document.getElementById('meta'), addr = document.getElementById('addr');
+    if (release) {
+      var url = new URL(release.apk, location.href).href;
+      document.getElementById('dl').href = url;
+      meta.textContent = (tr ? 'Sürüm ' : 'Version ') + release.version + ' · ' + mb(release.size) + ' · Android 6+';
+      addr.textContent = url;
+    } else if (failed) {
+      meta.textContent = tr ? 'Sürüm bilgisi şu an alınamadı.' : 'Version info is unavailable right now.';
+      addr.textContent = location.origin + '/';
+    }
+  }
+  setLang(initial);
+  fetch('latest.json', { cache: 'no-cache' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (j) { if (!j.apk || !j.version) throw new Error('bad'); release = j; render(); })
+    .catch(function () { failed = true; render(); });
+})();
+</script>
+</body>
+</html>

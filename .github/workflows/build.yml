@@ -1,0 +1,247 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    # Notes, checklists and other documents need no build (saves Actions minutes). A commit that also
+    # changes code still runs; tag pushes always run (path filters do not apply to tags).
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      publish: ${{ steps.version.outputs.publish }}
+    env:
+      HAS_KEYSTORE: ${{ secrets.ELM_KEYSTORE_BASE64 != '' }}
+      HAS_DEPLOY: ${{ secrets.ELM_DEPLOY_KEY != '' && secrets.ELM_DEPLOY_HOST != '' }}
+      # Where the app looks for updates (latest.json on our server). A repository variable, not in the code.
+      ELM_UPDATE_URL: ${{ vars.ELM_UPDATE_URL }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+
+      - name: Read version
+        id: version
+        run: |
+          version=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle.kts)
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          if [[ "$GITHUB_REF" == refs/tags/v* && "v$version" != "$GITHUB_REF_NAME" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match versionName $version in app/build.gradle.kts"
+            exit 1
+          fi
+          # A push to main publishes a release when its version has not been released yet.
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$GITHUB_EVENT_NAME" == push && "$GITHUB_REF" == refs/heads/main ]] && \
+               ! git ls-remote --exit-code --tags origin "refs/tags/v$version" > /dev/null; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Restore release keystore
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ELM_KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/elm-release.jks"
+          echo "ELM_KEYSTORE_FILE=$RUNNER_TEMP/elm-release.jks" >> "$GITHUB_ENV"
+
+      - name: Refuse to publish a release without the release key
+        if: steps.version.outputs.publish == 'true' && env.HAS_KEYSTORE != 'true'
+        run: |
+          echo "::error::Add the ELM_KEYSTORE_* secrets before publishing a release (see README)."
+          exit 1
+
+      - name: Unit tests
+        run: ./gradlew :core:test :app:testDebugUnitTest --console=plain
+
+      - name: Build APKs
+        env:
+          ELM_KEYSTORE_PASSWORD: ${{ secrets.ELM_KEYSTORE_PASSWORD }}
+          ELM_KEY_ALIAS: ${{ secrets.ELM_KEY_ALIAS }}
+          ELM_KEY_PASSWORD: ${{ secrets.ELM_KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease :app:assembleDebug --console=plain
+
+      # Release builds are obfuscated; this file turns crash reports back into readable stack traces (retrace).
+      - name: Name the R8 mapping file after the version
+        run: cp app/build/outputs/mapping/release/mapping.txt "app/build/outputs/mapping/release/mapping-${{ steps.version.outputs.tag }}.txt"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        # A release keeps its files on the Releases page; the artifact is only for builds without one. A full
+        # Actions storage quota must never stop a release, so a failed upload is not an error.
+        if: steps.version.outputs.publish != 'true'
+        continue-on-error: true
+        with:
+          name: elm-iptv-apks
+          path: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          # Actions storage is limited (0.5 GB a month); releases keep their APKs on the Releases page.
+          retention-days: 7
+
+      # One restricted SSH key for the server: it can only write into the update folder (rrsync), so paths are relative to it.
+      - name: Set up SSH for the server
+        if: env.HAS_DEPLOY == 'true' && (steps.version.outputs.publish == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+        env:
+          DEPLOY_KEY: ${{ secrets.ELM_DEPLOY_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.ELM_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          echo "SSH_CMD=ssh -i $HOME/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o BatchMode=yes" >> "$GITHUB_ENV"
+
+      # The website (site/) is served next to latest.json and the APKs; nothing on the server is deleted.
+      - name: Upload the website
+        if: env.HAS_DEPLOY == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          DEPLOY_HOST: ${{ secrets.ELM_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.ELM_DEPLOY_USER }}
+        run: rsync -e "$SSH_CMD" -r --chmod=D755,F644 site/ "$DEPLOY_USER@$DEPLOY_HOST:"
+
+      # The app checks for updates on our server: latest.json says which APK is newest, with its size and SHA-256.
+      - name: Write latest.json
+        if: steps.version.outputs.publish == 'true'
+        run: |
+          apks=(app/build/outputs/apk/release/*.apk)
+          if [[ ${#apks[@]} -ne 1 ]]; then echo "::error::Expected one release APK, found ${#apks[@]}"; exit 1; fi
+          apk="${apks[0]}"
+          mkdir -p "$RUNNER_TEMP/update"
+          cp "$apk" "$RUNNER_TEMP/update/"
+          jq -n \
+            --arg version "${{ steps.version.outputs.tag }}" \
+            --arg apk "$(basename "$apk")" \
+            --argjson size "$(stat -c %s "$apk")" \
+            --arg sha256 "$(sha256sum "$apk" | cut -d' ' -f1)" \
+            --arg notes "$(git log -1 --format=%B | grep -viE '^(co-authored-by|claude-session):')" \
+            '{version: ($version | ltrimstr("v")), apk: $apk, size: $size, sha256: $sha256, notes: $notes}' \
+            > "$RUNNER_TEMP/update/latest.json"
+          cat "$RUNNER_TEMP/update/latest.json"
+
+      - name: Upload the update to the server
+        if: steps.version.outputs.publish == 'true' && env.HAS_DEPLOY == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.ELM_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.ELM_DEPLOY_USER }}
+        run: |
+          # The APK first, latest.json last: a device never sees a latest.json whose APK is not there yet.
+          rsync -e "$SSH_CMD" --chmod=F644 "$RUNNER_TEMP"/update/*.apk "$DEPLOY_USER@$DEPLOY_HOST:"
+          rsync -e "$SSH_CMD" --chmod=F644 "$RUNNER_TEMP/update/latest.json" "$DEPLOY_USER@$DEPLOY_HOST:"
+
+      - name: Remove the SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy
+
+      - name: Warn when the update server is not set up
+        if: steps.version.outputs.publish == 'true' && (env.HAS_DEPLOY != 'true' || env.ELM_UPDATE_URL == '')
+        run: echo "::warning::ELM_DEPLOY_* secrets or the ELM_UPDATE_URL variable are missing; this release was not put on the update server."
+
+      - name: Publish GitHub Release
+        if: steps.version.outputs.publish == 'true'
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ELM IPTV ${{ steps.version.outputs.tag }}
+          files: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/mapping/release/mapping-*.txt
+          generate_release_notes: true
+
+  # Windows and Linux versions (desktop/): built and tested on their own system, then added to the same
+  # GitHub release as the APK. They are not put on the update server (that is only for the Android app).
+  desktop-windows:
+    permissions:
+      contents: write
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+      - name: Test and build the installer
+        shell: bash
+        run: ./gradlew :desktop:test :desktop:packageMsi --console=plain
+      - name: Name the installer after the version
+        shell: bash
+        run: |
+          version="${{ needs.build.outputs.tag }}"
+          mkdir -p dist
+          cp desktop/build/compose/binaries/main/msi/*.msi "dist/ELM-IPTV-${version#v}-windows-x64.msi"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: needs.build.outputs.publish != 'true'
+        continue-on-error: true
+        with:
+          name: elm-iptv-windows
+          path: dist/*.msi
+          if-no-files-found: error
+          # ~100 MB each: kept briefly; released versions are on the Releases page.
+          retention-days: 3
+      - name: Add to the GitHub Release
+        if: needs.build.outputs.publish == 'true'
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ needs.build.outputs.tag }}
+          files: dist/*.msi
+
+  desktop-linux:
+    permissions:
+      contents: write
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+      - name: Test and build the app folder
+        run: ./gradlew :desktop:test :desktop:packageAppImage --console=plain
+      - name: Make the AppImage
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/appimagetool"             https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x "$RUNNER_TEMP/appimagetool"
+          version="${{ needs.build.outputs.tag }}"
+          bash desktop/packaging/make-appimage.sh "${version#v}" "$RUNNER_TEMP/appimagetool"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: needs.build.outputs.publish != 'true'
+        continue-on-error: true
+        with:
+          name: elm-iptv-linux
+          path: desktop/build/appimage/*.AppImage
+          if-no-files-found: error
+          # ~100 MB each: kept briefly; released versions are on the Releases page.
+          retention-days: 3
+      - name: Add to the GitHub Release
+        if: needs.build.outputs.publish == 'true'
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ needs.build.outputs.tag }}
+          files: desktop/build/appimage/*.AppImage

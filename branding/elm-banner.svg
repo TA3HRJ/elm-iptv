@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <title>ELM IPTV TV banner</title>
+  <rect width="1280" height="720" fill="#0E1116"/>
+  <g transform="translate(110 150) scale(0.82)">
+  <defs>
+    <linearGradient id="ring" x1="70" y1="450" x2="440" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2F6BFF"/>
+      <stop offset="0.55" stop-color="#4FA3FF"/>
+      <stop offset="1" stop-color="#3EE0FF"/>
+    </linearGradient>
+    <linearGradient id="disk" x1="150" y1="390" x2="370" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1E5BE0"/>
+      <stop offset="1" stop-color="#4FA3FF"/>
+    </linearGradient>
+  </defs>
+  <!-- Ring: an open loop ("every moment"), with the gap at the top right -->
+  <path d="M 437.7 182.6 A 196 196 0 1 1 329.4 74.3"
+        fill="none" stroke="url(#ring)" stroke-width="40" stroke-linecap="round"/>
+  <!-- Live dot sitting in the gap of the ring -->
+  <circle cx="394.6" cy="117.4" r="24" fill="#FF5A6E"/>
+  <!-- Screen / play button -->
+  <circle cx="256" cy="256" r="138" fill="url(#disk)"/>
+  <path d="M 222 196 L 222 316 L 322 256 Z" fill="#FFFFFF" stroke="#FFFFFF"
+        stroke-width="18" stroke-linejoin="round"/>
+  </g>
+  <text x="600" y="395" font-family="Inter, 'Inter Display', sans-serif" font-weight="800"
+        font-size="250" letter-spacing="-6" fill="#FFFFFF">ELM</text>
+  <text x="608" y="540" font-family="Inter, 'Inter Display', sans-serif" font-weight="700"
+        font-size="118" letter-spacing="22" fill="#4FA3FF">IPTV</text>
+</svg>
