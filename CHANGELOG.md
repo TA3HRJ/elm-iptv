@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+- The page a phone opens to send or download backups (Settings -> Accounts and system -> Backup) has a
+  new design and clearer text; the password field hides what you type.
+- The website (elm.monster) has new text and colours.
+
 ## 1.0 — first public release
 
 ELM IPTV is an IPTV player for Fire TV and Android TV, built for the remote control, that also runs on

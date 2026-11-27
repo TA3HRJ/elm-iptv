@@ -168,35 +168,76 @@ class BackupTransfer(private val context: android.content.Context, private val b
     }
 
     private fun page(): String {
-        val title = tx("ELM IPTV yedek aktarımı", "ELM IPTV backup transfer")
-        val upload = tx("Yedeği TV'ye yükle (geri yükle)", "Send a backup to the TV (restore)")
-        val choose = tx("Yedek dosyasını seçin (.json)", "Choose the backup file (.json)")
-        val send = tx("Gönder", "Send")
-        val passwordLabel = tx("Yedek parolası (varsa)", "Backup password (if any)")
-        val download = tx("TV'deki güncel yedeği indir", "Download the TV's current backup")
-        val errors = tx("Hata günlüğü (sorun bildirmek için)", "Error log (for reporting a problem)")
-        val note = tx(
-            "Yedek, listelerin kullanıcı adı ve şifrelerini içerir. Dosyayı kimseyle paylaşmayın.",
-            "A backup contains the playlists' user names and passwords. Do not share the file.",
+        fun js(s: String) = s.replace("\\", "\\\\").replace("'", "\\'")
+        val lang = tx("tr", "en")
+        val title = tx("ELM IPTV · Yedek aktarımı", "ELM IPTV · Backup transfer")
+        val subtitle = tx("Telefondan yedek aktarımı", "Backup transfer from your phone")
+        val intro = tx(
+            "Bu sayfa televizyonunuzdaki ELM IPTV'ye bağlı. TV'de Yedekleme ekranı açık kaldığı sürece çalışır.",
+            "This page is connected to ELM IPTV on your TV. It works for as long as the Backup screen stays open on the TV.",
         )
-        val sending = tx("Gönderiliyor…", "Sending…")
-        return """<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>$title</title><style>
-body{font-family:system-ui,sans-serif;background:#0E1116;color:#E8ECF2;margin:0;padding:20px;max-width:560px}
-h1{font-size:20px}h2{font-size:16px;color:#7FB8FF;margin-top:28px}
-.box{background:#161B22;border-radius:12px;padding:16px}
-button,a.btn{display:inline-block;background:#4FA3FF;color:#0E1116;border:0;border-radius:8px;padding:10px 18px;font-size:15px;text-decoration:none;margin-top:12px}
-#r{margin-top:12px;white-space:pre-wrap}.note{color:#FFD18A;font-size:13px}
-</style></head><body><h1>$title</h1><p class="note">$note</p>
-<h2>$upload</h2><div class="box"><label>$choose<br><input type="file" id="f" accept=".json,application/json,text/plain"></label><br>
-<label>$passwordLabel<br><input type="text" id="pw" autocomplete="off"></label><br>
-<button id="s">$send</button><div id="r"></div></div>
-<h2>$download</h2><div class="box"><a class="btn" href="/backup.json?k=$key">backup.json</a></div>
-<h2>$errors</h2><div class="box"><a class="btn" href="/errors.txt?k=$key">errors.txt</a> <a class="btn" href="/memory.txt?k=$key">memory.txt</a></div>
-<script>
+        val upload = tx("Yedeği TV'ye gönder", "Send a backup to the TV")
+        val uploadHint = tx(
+            "Telefonunuzdaki yedek dosyasını seçin. TV listeleri, favorileri ve ayarları bu dosyadan geri yükler.",
+            "Pick the backup file on your phone. The TV restores playlists, favourites and settings from it.",
+        )
+        val choose = tx("Yedek dosyası (.json)", "Backup file (.json)")
+        val passwordLabel = tx("Parola", "Password")
+        val passwordHint = tx("Yedeği parolayla aldıysanız", "Only if the backup has one")
+        val send = tx("TV'ye gönder", "Send to TV")
+        val download = tx("TV'deki yedeği telefona alın", "Save the TV's backup to your phone")
+        val downloadHint = tx(
+            "TV'nin şu anki yedeğini indirip saklayın. Yeni bir cihaza geçerken işinize yarar.",
+            "Download the TV's current backup and keep it. It comes in handy when you move to a new device.",
+        )
+        val downloadButton = tx("Yedeği indir", "Download backup")
+        val errors = tx("Sorun mu var?", "Something wrong?")
+        val errorsHint = tx(
+            "Bir sorunu bildirirken bu iki dosyayı da gönderin:",
+            "When you report a problem, please attach these two files:",
+        )
+        val note = tx(
+            "Yedek dosyasında IPTV hesaplarınızın kullanıcı adı ve şifresi bulunur. Dosyayı kimseyle paylaşmayın.",
+            "The backup file holds the user names and passwords of your IPTV accounts. Don't share it with anyone.",
+        )
+        val pick = js(tx("Önce yedek dosyasını seçin.", "Pick the backup file first."))
+        val sending = js(tx("Gönderiliyor…", "Sending…"))
+        val offline = js(tx("TV'ye ulaşılamadı. Yedekleme ekranı hâlâ açık mı?", "Couldn't reach the TV. Is the Backup screen still open?"))
+        return """<!doctype html><html lang="$lang"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0e16"><title>$title</title><style>
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(600px 320px at 85% -40px,rgba(59,124,255,.22),transparent 70%),#0a0e16;color:#eef2f8;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:560px;margin:0 auto;padding:24px 16px 40px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.top b{display:block;font-size:19px}.top span{display:block;color:#a2aec2;font-size:14px}
+.intro{color:#a2aec2;margin:0 0 22px}
+.box{background:#131b28;border:1px solid #21304a;border-radius:16px;padding:18px;margin-bottom:14px}
+h2{font-size:17px;margin:0 0 4px}
+.hint{color:#a2aec2;font-size:14.5px;margin:0 0 14px}
+label{display:block;font-size:14px;color:#a2aec2;margin:12px 0 6px}
+input{width:100%;font:inherit;color:#eef2f8;background:#0a0e16;border:1px solid #21304a;border-radius:10px;padding:10px 12px}
+input:focus{outline:none;border-color:#44d0ff}
+input[type=file]{padding:8px}
+input::file-selector-button{font:inherit;font-size:14px;color:#eef2f8;background:#172133;border:1px solid #2c3e5e;border-radius:8px;padding:6px 12px;margin-right:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;font:inherit;font-weight:600;border-radius:999px;padding:11px 22px;text-decoration:none;border:1px solid #2c3e5e;color:#eef2f8;background:#172133;margin:4px 8px 0 0;cursor:pointer}
+.btn.primary{background:linear-gradient(100deg,#3b7cff,#44d0ff);border-color:transparent;color:#06101f;margin-top:16px}
+#r{margin-top:14px;white-space:pre-wrap;color:#eef2f8}#r:empty{display:none}
+.note{border:1px solid rgba(255,90,106,.35);background:rgba(255,90,106,.08);border-radius:12px;padding:12px 14px;color:#ffc9ce;font-size:14px;margin-top:18px}
+</style></head><body><main>
+<div class="top"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3b7cff"/><stop offset="1" stop-color="#44d0ff"/></linearGradient></defs><path d="M39 12A19 19 0 1 0 43 24" fill="none" stroke="url(#g)" stroke-width="4.5" stroke-linecap="round"/><circle cx="24" cy="24" r="12" fill="url(#g)"/><path d="M21 18.5v11l9-5.5z" fill="#fff"/><circle cx="37.5" cy="8.5" r="3.2" fill="#ff5a6a"/></svg>
+<div><b>ELM IPTV</b><span>$subtitle</span></div></div>
+<p class="intro">$intro</p>
+<div class="box"><h2>$upload</h2><p class="hint">$uploadHint</p>
+<label for="f">$choose</label><input type="file" id="f" accept=".json,application/json,text/plain">
+<label for="pw">$passwordLabel</label><input type="password" id="pw" autocomplete="off" placeholder="$passwordHint">
+<button class="btn primary" id="s">$send</button><div id="r"></div></div>
+<div class="box"><h2>$download</h2><p class="hint">$downloadHint</p><a class="btn" href="/backup.json?k=$key">$downloadButton</a></div>
+<div class="box"><h2>$errors</h2><p class="hint">$errorsHint</p><a class="btn" href="/errors.txt?k=$key">errors.txt</a><a class="btn" href="/memory.txt?k=$key">memory.txt</a></div>
+<p class="note">$note</p>
+</main><script>
 document.getElementById('s').onclick=async()=>{const f=document.getElementById('f').files[0];const r=document.getElementById('r');
-if(!f){return}r.textContent='$sending';try{const t=await f.text();
-const x=await fetch('/restore?k=$key',{method:'POST',headers:{'Content-Type':'application/json','X-Backup-Password':encodeURIComponent(document.getElementById('pw').value)},body:t});r.textContent=await x.text()}catch(e){r.textContent=String(e)}}
+if(!f){r.textContent='$pick';return}r.textContent='$sending';try{const t=await f.text();
+const x=await fetch('/restore?k=$key',{method:'POST',headers:{'Content-Type':'application/json','X-Backup-Password':encodeURIComponent(document.getElementById('pw').value)},body:t});r.textContent=await x.text()}catch(e){r.textContent='$offline'}}
 </script></body></html>"""
     }
 

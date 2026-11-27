@@ -22,8 +22,8 @@ android {
         // API 23 (Android 6): required by Media3 1.11 and current AndroidX. Fire OS 6+ devices are API 25-30.
         minSdk = 23
         targetSdk = 35
-        versionCode = 52
-        versionName = "1.0.0"
+        versionCode = 53
+        versionName = "1.0.1"
         buildConfigField("String", "UPDATE_URL", "\"${updateUrl.replace("\"", "")}\"")
     }
 
